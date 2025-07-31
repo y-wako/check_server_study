@@ -1,0 +1,22 @@
+import subprocess
+import logging
+from datetime import datetime
+
+SERVERS = ["IPアドレス", "IPアドレス", "domain"]
+
+def is_alive(host):
+    try:
+        result = subprocess.run(["ping", "-c", "2", host], stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        return result.returncode == 0
+    except Exception as e:
+        logging.error(f"{host} チェック中に例外発生: {e}")
+        return False
+
+if __name__ == "__main__":
+    logging.basicConfig(filename="healthcheck.log", level=logging.INFO)
+    logging.info(f"監視開始: {datetime.now()}")
+
+    for server in SERVERS:
+        status = "OK" if is_alive(server) else "NG"
+        logging.info(f"{server}:{status}")
